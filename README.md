@@ -11,6 +11,21 @@
 CineTunes answers a small question: *what music is in this movie?* Search for a
 film, see its soundtrack, and open the tracks in Spotify.
 
+## Why this was archived
+
+**Spotify changed its developer policy in February 2026.** Development Mode apps
+now require the app owner to hold an active **Spotify Premium** subscription, and
+test users are capped at five ([announcement](https://developer.spotify.com/blog/2026-02-06-update-on-developer-access-and-platform-security),
+[migration guide](https://developer.spotify.com/documentation/web-api/tutorials/february-2026-migration-guide)).
+
+That was the end of this project. The entire premise was reading a film's
+soundtrack out of Spotify, and paying for a Premium subscription to keep a
+learning project alive wasn't worth it.
+
+The app still works end to end against TMDB — only the Spotify half is now gated
+behind a subscription, which is why the screenshots below stop at "Missing
+Spotify credentials".
+
 ## What it does
 
 1. **Search a movie** — queries the [TMDB](https://www.themoviedb.org/) API and
@@ -29,7 +44,7 @@ an error view with a **Try Again** button.
 | Screen | State |
 | --- | --- |
 | Search (Home tab) | Working |
-| Soundtrack detail | Working |
+| Soundtrack detail | Working, but needs Premium Spotify credentials |
 | Liked Soundtracks | Working |
 | Library / Settings | Working (navigation only) |
 | Discover | Placeholder — never built |
@@ -50,7 +65,8 @@ These are the rough edges I'd fix first if I picked this up again:
   flow, which is designed for server-to-server apps. Using it in a shipped
   client means the client secret sits in the app bundle where it can be
   extracted. The correct approach is Authorization Code + PKCE, or proxying
-  Spotify through a backend.
+  Spotify through a backend. (Moot now that API access requires Premium — see
+  [Why this was archived](#why-this-was-archived).)
 - **The Spotify token never refreshes.** It expires after about an hour, after
   which requests fail until the app is restarted.
 - **Album tracks are parsed with `JSONSerialization`** rather than `Codable`, so
@@ -81,10 +97,15 @@ cp Config/Secrets.example.xcconfig Config/Secrets.xcconfig
 
 Then set:
 
-- `SPOTIFY_CLIENT_ID` and `SPOTIFY_CLIENT_SECRET` — from the
-  [Spotify Developer Dashboard](https://developer.spotify.com/dashboard)
 - `TMDB_API_KEY` — the TMDB **read access token** from your
   [TMDB API settings](https://www.themoviedb.org/settings/api)
+- `SPOTIFY_CLIENT_ID` and `SPOTIFY_CLIENT_SECRET` — from the
+  [Spotify Developer Dashboard](https://developer.spotify.com/dashboard). Be
+  aware that Spotify now requires the app owner to hold a **Premium**
+  subscription for Development Mode apps, so this step may not be open to you.
+
+With only `TMDB_API_KEY` set, movie search works fully and the soundtrack screen
+reports the missing Spotify credentials instead of failing silently.
 
 `Config/Secrets.xcconfig` is git-ignored. The project still **builds** without
 it — the features that need credentials report a missing-configuration error
@@ -117,7 +138,28 @@ a Swift file.
 
 ## Screenshots
 
-<!-- TODO: add screenshots of the search screen and the soundtrack view -->
+Searching for a film returns real results from TMDB:
+
+<p align="center">
+  <img src="Screenshots/02-search-results.png" width="290" alt="Search results for Inception, showing posters, release dates and plot summaries">
+</p>
+
+Opening one shows the film's details and plot, then stops at the Spotify
+credential wall — which is where this project ended:
+
+<p align="center">
+  <img src="Screenshots/03-soundtrack.png" width="290" alt="Film detail screen reporting that Spotify credentials are missing">
+</p>
+
+The rest is navigation plus the three screens that were never built:
+
+<p align="center">
+  <img src="Screenshots/01-home-idle.png" width="180" alt="Home screen before searching">
+  <img src="Screenshots/04-library.png" width="180" alt="Library screen">
+  <img src="Screenshots/05-liked-soundtracks.png" width="180" alt="Liked Soundtracks screen">
+  <img src="Screenshots/06-settings.png" width="180" alt="Settings screen">
+  <img src="Screenshots/07-discover.png" width="180" alt="Discover placeholder screen">
+</p>
 
 ---
 

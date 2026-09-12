@@ -2,6 +2,7 @@
 Config/Secrets.xcconfig
 
 # Xcode
+*.xcresult
 xcuserdata/
 *.xcuserstate
 *.xcworkspace/xcuserdata/

@@ -1,0 +1,9 @@
+// Base configuration for the CineTunes target.
+//
+// Secrets are NOT stored in source control. Copy
+// `Secrets.example.xcconfig` to `Secrets.xcconfig` (same folder) and fill in
+// your own credentials. The `#include?` below is optional, so the project still
+// builds when the secrets file is missing (the relevant features will simply
+// report a missing-configuration error at runtime).
+
+#include? "Secrets.xcconfig"
